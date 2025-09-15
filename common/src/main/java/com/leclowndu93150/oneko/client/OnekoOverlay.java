@@ -16,7 +16,7 @@ public class OnekoOverlay {
     private final Map<Integer, ResourceLocation> textures = new HashMap<>();
 
     private double mouseX, mouseY;
-    private double catX = 100, catY = 100;
+    private double catX = -1, catY = -1;
     private int currentFrame = 0;
     private int animationTick = 0;
     private int state = 0;
@@ -65,6 +65,13 @@ public class OnekoOverlay {
             return;
         }
 
+        if (catX < 0 || catY < 0) {
+            catX = minecraft.getWindow().getGuiScaledWidth() / 2.0;
+            catY = minecraft.getWindow().getGuiScaledHeight() / 2.0;
+            targetX = catX;
+            targetY = catY;
+        }
+
         long currentTime = System.currentTimeMillis();
         
         updateMousePosition();
@@ -99,6 +106,9 @@ public class OnekoOverlay {
         mouseX = xpos[0] / guiScale;
         mouseY = ypos[0] / guiScale;
 
+        mouseX = Math.max(0, Math.min(mouseX, minecraft.getWindow().getGuiScaledWidth()));
+        mouseY = Math.max(0, Math.min(mouseY, minecraft.getWindow().getGuiScaledHeight()));
+
         if (Math.abs(mouseX - lastMouseX) > 2 || Math.abs(mouseY - lastMouseY) > 2) {
             mouseMoved = true;
             targetX = mouseX;
@@ -132,6 +142,9 @@ public class OnekoOverlay {
 
         catX -= (diffX / distance) * config.runSpeed;
         catY -= (diffY / distance) * config.runSpeed;
+        
+        catX = Math.max(config.catSize/2.0, Math.min(catX, minecraft.getWindow().getGuiScaledWidth() - config.catSize/2.0));
+        catY = Math.max(config.catSize/2.0, Math.min(catY, minecraft.getWindow().getGuiScaledHeight() - config.catSize/2.0));
         
         currentFrame = getRunFrame();
     }
