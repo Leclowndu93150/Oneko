@@ -9,9 +9,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Window.class, remap = false)
 public class MixinWindow {
-    
+
     @Inject(method = "updateDisplay", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;flipFrame(J)V", shift = At.Shift.BEFORE))
     private void onUpdateDisplay(CallbackInfo ci) {
         OnekoOverlay.getInstance().render();
+    }
+
+    @Inject(method = "close", at = @At("HEAD"))
+    private void onClose(CallbackInfo ci) {
+        OnekoOverlay.getInstance().cleanup();
     }
 }
